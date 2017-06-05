@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "7C89B0FC34838A4AC87CD82788DF2393EB5FB871",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "7C89B0FC34838A4AC87CD82788DF2393EB5FB871" : 9223372036854775807,
+    "A8338B914E382BE720ED38B31290B237983A15E4" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "64AC8C13-4D70-4100-A3CE-3DF26E641EF1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "7C89B0FC34838A4AC87CD82788DF2393EB5FB871" : "sound_vis\/",
+    "A8338B914E382BE720ED38B31290B237983A15E4" : "sound_vis\/Noesys-archive\/NoesysFromWork\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "mySketch",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "mySketch\/mySketch.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:unjust\/sound_vis.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "7C89B0FC34838A4AC87CD82788DF2393EB5FB871"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:unjust\/soundvis.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "A8338B914E382BE720ED38B31290B237983A15E4"
+    }
+  ]
+}

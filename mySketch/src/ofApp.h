@@ -3,14 +3,18 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "Lissajous.hpp"
+#include "Ring.h"
 
 class ofApp : public ofBaseApp{
     
     public:
+    
+    
+        
         void setup();
         void update();
         void draw();
-        
+    
         void keyPressed(int key);
         void keyReleased(int key);
         void mouseMoved(int x, int y );
@@ -23,30 +27,59 @@ class ofApp : public ofBaseApp{
         void dragEvent(ofDragInfo dragInfo);
         void gotMessage(ofMessage msg);
         
+        void sndTogglePressed(const void* sender, bool &value);
+        void animButtonPressed(const void* sender, bool &value);
+    
         void audioOut( float * output, int bufferSize, int nChannels );
-        
+        void playSound(bool snd);
+    
+    private:
+    
         // gui
-        ofxPanel gui;
-        ofxFloatSlider radiusX;
-        ofxFloatSlider radiusY;
-        ofxToggle debug;
-   
+    
+    
+        ofxPanel soundPanel;
+        ofParameterGroup soundParams;
+    
+        ofxPanel animationsPanel;
+        ofParameterGroup animationParams;
+    
+        ofParameterGroup drawingParams;
+        ofxPanel drawingParamsPanel;
+    
+        ofParameter <float>radiusX;
+        ofParameter <float>radiusY;
+    
+        ofParameter <bool>playSnd;
+        ofParameter <bool>playFennesz;
+    
+        ofParameter <bool>showRings;
+        ofParameter <bool>showLissajous;
+        ofParameter <bool>showDebug;
     
         // drawing
+    
         ofPolyline line;
+    
         Lissajous liss;
+    
+        Ring ring;
+        Ring rings[128];
         
         float posX;
         float posY;
         double phase;
-        
+    
         // sound
+    
         ofSoundPlayer noesysAudio;
-        float * fftSmoothed;
+        float *fftSmoothed;
         int nBandsToGet;
-
-    private:
+        bool playingSnd;
+    
         void initSound();
         void fftDraw();
-    
+        void setupGui();
+        void initAnimObjects();
+
 };

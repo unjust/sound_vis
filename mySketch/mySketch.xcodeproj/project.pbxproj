@@ -14,6 +14,7 @@
 		8AF951DFD315536EBBE33AE5 /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27E503BB9F142DB79C114BD0 /* ofxLabel.cpp */; };
 		9D0EB79E278E508FBF77BFAA /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A4F2997985A723E6092047E /* ofxToggle.cpp */; };
 		CA6D7E141ED50DD800E078D3 /* Lissajous.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA6D7E121ED50DD800E078D3 /* Lissajous.cpp */; };
+		CAC971661ED8A4AD0044B5F8 /* Ring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAC971641ED8A4AD0044B5F8 /* Ring.cpp */; };
 		DA362FCEBF43C661DB4C4319 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 049A2D1E7080AD406C3A338D /* ofxGuiGroup.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
@@ -68,6 +69,8 @@
 		C6E1F0942E2C40044ED07C98 /* ofxGuiGroup.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxGuiGroup.h; path = ../../openFrameworks/of_v0.9.8_osx_release/addons/ofxGui/src/ofxGuiGroup.h; sourceTree = SOURCE_ROOT; };
 		CA6D7E121ED50DD800E078D3 /* Lissajous.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lissajous.cpp; sourceTree = "<group>"; };
 		CA6D7E131ED50DD800E078D3 /* Lissajous.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Lissajous.hpp; sourceTree = "<group>"; };
+		CAC971641ED8A4AD0044B5F8 /* Ring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ring.cpp; sourceTree = "<group>"; };
+		CAC971651ED8A4AD0044B5F8 /* Ring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ring.h; sourceTree = "<group>"; };
 		DD7BABC9A91E8A89AFE9B24B /* ofxGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxGui.h; path = ../../openFrameworks/of_v0.9.8_osx_release/addons/ofxGui/src/ofxGui.h; sourceTree = SOURCE_ROOT; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../openFrameworks/of_v0.9.8_osx_release/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* mySketchDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mySketchDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,11 +166,13 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
-				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				CA6D7E121ED50DD800E078D3 /* Lissajous.cpp */,
+				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				CA6D7E131ED50DD800E078D3 /* Lissajous.hpp */,
+				CA6D7E121ED50DD800E078D3 /* Lissajous.cpp */,
+				CAC971651ED8A4AD0044B5F8 /* Ring.h */,
+				CAC971641ED8A4AD0044B5F8 /* Ring.cpp */,
+				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -273,6 +278,7 @@
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				0DA06D8BFA711CB3649B6008 /* ofxBaseGui.cpp in Sources */,
 				F59F25D0CB90C56F60FA4C27 /* ofxButton.cpp in Sources */,
+				CAC971661ED8A4AD0044B5F8 /* Ring.cpp in Sources */,
 				DA362FCEBF43C661DB4C4319 /* ofxGuiGroup.cpp in Sources */,
 				8AF951DFD315536EBBE33AE5 /* ofxLabel.cpp in Sources */,
 				117805FA1FB7D02AC32CAD4A /* ofxPanel.cpp in Sources */,

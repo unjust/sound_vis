@@ -1,0 +1,9 @@
+<group>
+	<radius_x>10</radius_x>
+	<radius_y>10</radius_y>
+	<playSnd>1</playSnd>
+	<playFennesz>0</playFennesz>
+	<circles>1</circles>
+	<lissajous>0</lissajous>
+	<debug>0</debug>
+</group>

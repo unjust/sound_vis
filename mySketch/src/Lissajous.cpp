@@ -150,40 +150,40 @@ void Lissajous::expand() {
     setAlpha(alpha -= .001);
 }
 
-//
-//void Lissajous::coil(float ixRadius, float icoils) {
-//    if (expanding) {
-//        expand();
-//        if (A < 0.1) alive = false;
-//        return;
-//    }
-//    if (selected && radiusX > threshhold) {
-//        expanding = true;
-//        return;
-//    }
-//
-//    float startCoils = coils;
-//    float endCoils   = icoils;
-//
-//    coils += (.001 * (endCoils - startCoils));
-//    printf("diff = %f, coils = %f\n", startCoils - endCoils, coils);
-//
-//    float startXRadius = radiusX;
-//    float endXRadius = ixRadius;
-//
-//    radiusX += (.001 * (endXRadius - startXRadius));
-//
-//    //float startYRadius = yRadius;
-//    //float endYRadius   = iyRadius;
-//
-//    //yRadius += (.001 * (endYRadius - startYRadius));
-//}
-//
+/*
+void Lissajous::coil(float ixRadius, float icoils) {
+    if (expanding) {
+        expand();
+        if (A < 0.1) alive = false;
+        return;
+    }
+    if (selected && radiusX > threshhold) {
+        expanding = true;
+        return;
+    }
 
-//
-//bool Lissajous::getAlive() {
-//    return alive;
-//}
+    float startCoils = coils;
+    float endCoils   = icoils;
+
+    coils += (.001 * (endCoils - startCoils));
+    printf("diff = %f, coils = %f\n", startCoils - endCoils, coils);
+
+    float startXRadius = radiusX;
+    float endXRadius = ixRadius;
+
+    radiusX += (.001 * (endXRadius - startXRadius));
+
+    //float startYRadius = yRadius;
+    //float endYRadius   = iyRadius;
+
+    //yRadius += (.001 * (endYRadius - startYRadius));
+}
+*/
+
+
+bool Lissajous::getAlive() {
+    return alive;
+}
 
 
 
