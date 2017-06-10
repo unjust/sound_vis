@@ -31,13 +31,16 @@ Lissajous::Lissajous() {
    
     setColor(256, 256, 256, 1.);
     
-    nPoints = 200;
+    nPoints = 800;
     coils = 0.;
     stretch = 0.;
     
     //setId(0);
 }
 
+void Lissajous::setPoints(int p) {
+    nPoints = p;
+}
 
 void Lissajous::setRadius(float rx, float ry) {
     radiusX = rx;
@@ -118,10 +121,13 @@ void Lissajous::draw() {
         
         
         // turning in one place, static pattern
+//        float x = centerX + (cos(position + counter) * radiusX);
+//        float y = centerY + sin(position + counter)  - (lissLength/2.) + fmod(y + (lissLength/2.), lissLength);
+//        float z = centerZ;
+       
         float x = centerX + (cos(position + counter) * radiusX);
         float y = centerY + sin(position + counter)  - (lissLength/2.) + fmod(y + (lissLength/2.), lissLength);
-        float z = centerZ;
-        
+        float z = centerZ + (sin(position + counter) * radiusX);
         
         /*
         // changing patterns when position of liss moves
@@ -137,7 +143,7 @@ void Lissajous::draw() {
         float z = centerZ;
         */
 
-        //printf("draw %f %f %f \n", x, y, z);
+        printf("draw %f %f %f \n", x, y, z);
         
         ofDrawCircle(x, y, z, 3);
     }

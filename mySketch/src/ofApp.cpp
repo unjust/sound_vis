@@ -4,10 +4,19 @@
 void ofApp::setup(){
     
     ofBackground(0,0,0);
-    
+   
     setupGui();
     initSound();
+    
+    sceneCenter = ofVec3f(ofGetWidth()/2, ofGetHeight()/2, 0);
     initAnimObjects();
+    
+    camera.setupPerspective();
+    camera.setFov(60);
+    
+    // camera.setPosition(sceneCenter);
+    // sceneCenter = ofVec3f(0, 0, 0);
+    
 }
 
 //--------------------------------------------------------------
@@ -18,6 +27,7 @@ void ofApp::update(){
     }
 
     //sound
+    
     // update the sound playing system:
     ofSoundUpdate();
   
@@ -27,6 +37,7 @@ void ofApp::update(){
     for (int i = 0; i < nBandsToGet; i++) {
         // let the smoothed value sink to zero:
         fftSmoothed[i] *= 0.96f;
+        
         // take the max, either the smoothed or the incoming:
         if (fftSmoothed[i] < val[i]) {
             fftSmoothed[i] = val[i];
@@ -34,7 +45,8 @@ void ofApp::update(){
         //printf("%f \n", fftSmoothed[i]);
     }
     
-    liss.setRadius(fftSmoothed[10] * 300, radiusY);
+    liss.setRadius(radiusX + (fftSmoothed[10] * 300), radiusY);
+    liss.setPoints(points);
     
     int WINDOW_SIZE = nBandsToGet; // temporary
     
@@ -46,8 +58,10 @@ void ofApp::update(){
             radius += fftSmoothed[i];
         }
         radius /= (WINDOW_SIZE/2)/NUMBER_OF_RINGS;
+        
         //float heightR = theWindows[windowToDraw].magnitudeR;
-        rings[j].setFinalRadius(radius * 120.);
+        rings[j].setFinalRadius(ringRadius + (radius * 120.));
+        rings[j].setZ(ringZ);
         
         // if (theWindows[currentWindow].subBeats[j] == 1)
         //{
@@ -56,18 +70,40 @@ void ofApp::update(){
             //printf("SUBBEAT FOUND \n");
         //}
         //else ringSwitch = 0;
+        
     }
+    
+    camera.setNearClip(nearClip);
+    camera.setFarClip(farClip);
+    
+    // change this for one update to constant
+    if (lookAtCenter) {
+        camera.lookAt(sceneCenter);
+    }
+    
+    // cout << "\n position " << camera.getPosition();
+
+    
+    // camera.setPosition(ofVec3f(ofGetWidth()/2, ofGetHeight()/2, zoom));
+    
+    //camera.pan(cameraRotate);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
   
-    drawingParamsPanel.draw();
-    animationsPanel.draw();
+    // gui
+    cameraPanel.draw();
+    lissajousAttrsPanel.draw();
+    ringAttrsPanel.draw();
     soundPanel.draw();
+  
+    // ofPushMatrix();
+    // ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 0); // now center is 0, 0, 0
     
-    line.draw();
-    
+    camera.begin();
+    cout << "\n position " << camera.getPosition();
+
     if (showLissajous) {
         liss.draw();
     }
@@ -78,8 +114,12 @@ void ofApp::draw(){
         }
     }
     
+    camera.end();
+    // ofPopMatrix();
+    
     // draw fft
     if (showDebug) {
+        line.draw();
         fftDraw();
     }
 }
@@ -157,13 +197,48 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 void ofApp::setupGui(){
     
-    drawingParams.setName("Drawing params");
+    float x = 10,
+        y = 10;
     
-    drawingParams.add(radiusX.set("radius x", 10, 10, 300));
-    drawingParams.add(radiusY.set("radius y", 10, 10, 300));
+    lissajousAttrsParams.setName("Lissajous");
+    
+    lissajousAttrsParams.add(radiusX.set("radius x", 10, 10, 300));
+    lissajousAttrsParams.add(radiusY.set("radius y", 10, 10, 300));
+    lissajousAttrsParams.add(points.set("points", 700, 1, 1200));
+    lissajousAttrsParams.add(showLissajous.set("lissajous", true));
+    
+    showLissajous.addListener(this, &ofApp::animButtonPressed);
+    
+    lissajousAttrsPanel.setup(lissajousAttrsParams, "paramSettings.xml", x, y);
+    
+    ringAttrsParams.setName("Rings");
+    ringAttrsParams.add(ringRadius.set("radius", 10, 0, 300));
+    ringAttrsParams.add(ringZ.set("z", 0, 0, 1000));
+    ringAttrsParams.add(showRings.set("circles", false));
+    
+    showRings.addListener(this, &ofApp::animButtonPressed);
+    
+    ringAttrsPanel.setup(ringAttrsParams, "ring.xml", x, y += 100);
+    
+    cameraParams.setName("Camera");
 
-    drawingParamsPanel.setup(drawingParams, "paramSettings.xml", 10, 10);
+    cameraParams.add(nearClip.set("near", .1, .1, 3000));
+    cameraParams.add(farClip.set("far", 700, 1, 3000));
     
+    cameraParams.add(cameraX.set("x", ofGetWidth()/2, 1, 3000));
+    cameraParams.add(cameraY.set("y", ofGetHeight()/2, 1, 3000));
+    cameraParams.add(zoom.set("zoom", 665., 0, 1000.0));
+    cameraParams.add(cameraRotate.set("rotate", 0, 0, 360));
+    cameraParams.add(lookAtCenter.set("point", true));
+    cameraParams.add(showDebug.set("debug", false));
+    
+    cameraX.addListener(this, &ofApp::handleCameraControls);
+    cameraY.addListener(this, &ofApp::handleCameraControls);
+    cameraRotate.addListener(this, &ofApp::handleCameraControls);
+    //lookAtCenter.addListener(this, &ofApp::handleCameraControls);
+    
+    cameraPanel.setup(cameraParams, "camera.xml", x, y += 100);
+   
     soundParams.setName("Sound");
     
     soundParams.add(playSnd.set("playSnd", false));
@@ -172,19 +247,40 @@ void ofApp::setupGui(){
     soundParams.add(playFennesz.set("playFennesz", true));
     playFennesz.addListener(this, &ofApp::sndTogglePressed);
     
-    soundPanel.setup(soundParams, "soundSettings.xml", 10, 100);
+    soundParams.add(volume.set("volume", 0, 0, 1));
+    volume.addListener(this, &ofApp::handleVolume);
+    soundPanel.setup(soundParams, "soundSettings.xml", x, y += 100);
+  
+}
+
+void ofApp::handleCameraControls(const void* sender, float &value) {
+    cout << "\n value " << value;
     
-    animationParams.setName("Animations");
+    //cout << "\n up dir " << camera.getUpDir();
+    // camera.rotate(value, camera.getUpDir());
+    ofParameter<float> s = *((ofParameter<float>*) sender);
     
-    animationParams.add(showRings.set("circles", false));
-    showRings.addListener(this, &ofApp::animButtonPressed);
+    if (s == cameraRotate) {
+        camera.rotateAround(value, camera.getUpDir(), sceneCenter);
+        // camera.lookAt(sceneCenter);
+    }
     
-    animationParams.add(showLissajous.set("lissajous", true));
-    showLissajous.addListener(this, &ofApp::animButtonPressed);
+    ofVec3f myCamGlobalPosition = camera.getGlobalPosition();
+    ofQuaternion myCamRotation = camera.getGlobalOrientation();
     
-    animationParams.add(showDebug.set("debug", false));
+    if (s == cameraX) {
+        camera.setPosition(cameraX, myCamGlobalPosition.y, myCamGlobalPosition.z);
+        // camera.lookAt(sceneCenter);
+    }
+    if (s == cameraY) {
+        camera.setPosition(myCamGlobalPosition.x, cameraY, myCamGlobalPosition.z);
+        // camera.lookAt(sceneCenter);
+    }
+   
     
-    animationsPanel.setup(animationParams, "animationsSettings.xml", 10, 200);
+    cout << "\n position " << myCamGlobalPosition;
+    cout << "\n rotation " << myCamRotation;
+    // camera.rotate(value, 0, 0, 0);
 }
 
 void ofApp::animButtonPressed(const void* sender, bool &value) {
@@ -217,6 +313,10 @@ void ofApp::sndTogglePressed(const void* sender, bool &value) {
   
 }
 
+void ofApp::handleVolume(const void* sender, float &value) {
+    noesysAudio.setVolume(value);
+}
+
 //--------------------------------------------------------------
 void ofApp::initSound(){
    
@@ -228,13 +328,17 @@ void ofApp::initSound(){
         fftSmoothed[i] = 0;
     }
     nBandsToGet = 128;
+
 }
 
 void ofApp::playSound(bool snd) {
+    
     string filename = (snd) ? "sounds/snd.aiff" : "sounds/fennesz.aiff";
     noesysAudio.load(filename);
     noesysAudio.play();
     
+    // for debugging
+    noesysAudio.setVolume(volume);
 }
 
 //--------------------------------------------------------------
@@ -252,8 +356,8 @@ void ofApp::initAnimObjects(){
     // lissajous setup
     liss = Lissajous();
     
-    liss.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
-    liss.setEndPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
+    liss.setPosition(sceneCenter.x, sceneCenter.y, sceneCenter.z);
+    liss.setEndPosition(sceneCenter.x, sceneCenter.y, sceneCenter.z);
     liss.setRadius(20, 1.2);
     liss.setColor(256, 256, 0, 256);
     liss.setAlive(true);
@@ -261,6 +365,6 @@ void ofApp::initAnimObjects(){
     // init rings
     for (int r = 0; r < 128; r++) {
         rings[r] = Ring();
-        rings[r].setPosition(ofGetWidth()/2, 100 + r * 10);
+        rings[r].setPosition(sceneCenter.x, 200 + r * 20, 0);
     }
 }

@@ -82,9 +82,14 @@ void Ring::move(){
 	//printf("x, y = %f %f \n", x, y );
 }
 
-void Ring::setPosition(float ix, float iy){
+void Ring::setPosition(float ix, float iy, float iz){
     x = ix;
     y = iy;
+    z = iz;
+}
+
+void Ring::setZ(float iz){
+    z = iz;
 }
 
 void Ring::position(){
@@ -146,7 +151,7 @@ void Ring::draw(int iswitcher, float iacceleration){
 			float aX = x + sin(angle) * currentRadius;
 			float aY = y + cos(angle) * currentRadius;
 			float aZ = z;
-			glVertex3f(aX, aY, 0);
+			glVertex3f(aX, aY, aZ);
             // printf("currentRadius %f \n", currentRadius);
 			// printf("hello %f %f %f \n", aX, aY, aZ);
 		} 

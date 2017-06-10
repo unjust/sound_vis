@@ -33,7 +33,7 @@ class Lissajous {
         void coil(float ixRadius, float icoils);
     
         Lissajous();
-    
+        void setPoints(int p);
         
     private:
         int id;

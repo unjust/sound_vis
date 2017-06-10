@@ -43,7 +43,8 @@ class Ring {
         void setRadius(float r);
         void setFinalRadius(float r);
 
-		void setPosition(float ix, float iy);
+		void setPosition(float ix, float iy, float iz);
+        void setZ(float iz);
 		void position();
 	
 		void bounce();

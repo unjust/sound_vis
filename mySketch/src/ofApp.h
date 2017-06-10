@@ -8,8 +8,6 @@
 class ofApp : public ofBaseApp{
     
     public:
-    
-    
         
         void setup();
         void update();
@@ -17,7 +15,7 @@ class ofApp : public ofBaseApp{
     
         void keyPressed(int key);
         void keyReleased(int key);
-        void mouseMoved(int x, int y );
+        void mouseMoved(int x, int y);
         void mouseDragged(int x, int y, int button);
         void mousePressed(int x, int y, int button);
         void mouseReleased(int x, int y, int button);
@@ -29,33 +27,53 @@ class ofApp : public ofBaseApp{
         
         void sndTogglePressed(const void* sender, bool &value);
         void animButtonPressed(const void* sender, bool &value);
+        void handleVolume(const void* sender, float &value);
+
+        void handleCameraControls(const void* sender, float &value);
     
         void audioOut( float * output, int bufferSize, int nChannels );
         void playSound(bool snd);
     
     private:
     
-        // gui
+        ofCamera camera;
+        ofVec3f sceneCenter;
     
+        // gui
     
         ofxPanel soundPanel;
         ofParameterGroup soundParams;
     
-        ofxPanel animationsPanel;
-        ofParameterGroup animationParams;
-    
-        ofParameterGroup drawingParams;
-        ofxPanel drawingParamsPanel;
-    
-        ofParameter <float>radiusX;
-        ofParameter <float>radiusY;
-    
+        ofParameter <float>volume;
         ofParameter <bool>playSnd;
         ofParameter <bool>playFennesz;
     
-        ofParameter <bool>showRings;
+        ofxPanel lissajousAttrsPanel;
+        ofParameterGroup lissajousAttrsParams;
+    
+        ofParameter <float>radiusX;
+        ofParameter <float>radiusY;
+        ofParameter <float>points;
         ofParameter <bool>showLissajous;
+    
+        ofxPanel ringAttrsPanel;
+        ofParameterGroup ringAttrsParams;
+    
+        ofParameter <bool>showRings;
+        ofParameter <float>ringRadius;
+        ofParameter <float>ringZ;
+    
+        ofxPanel cameraPanel;
+        ofParameterGroup cameraParams;
+  
+        ofParameter <float>cameraX;
+        ofParameter <float>cameraY;
+        ofParameter <float>zoom;
+        ofParameter <float>nearClip;
+        ofParameter <float>farClip;
+        ofParameter <float>cameraRotate;
         ofParameter <bool>showDebug;
+        ofParameter <bool>lookAtCenter;
     
         // drawing
     
@@ -76,6 +94,8 @@ class ofApp : public ofBaseApp{
         float *fftSmoothed;
         int nBandsToGet;
         bool playingSnd;
+    
+        // methods
     
         void initSound();
         void fftDraw();
