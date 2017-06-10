@@ -1,1 +1,5 @@
-DS_Store
+.DS_Store
+Noesys-archive
+libs/
+libsndfile-1.0.25
+realTimeAudio
