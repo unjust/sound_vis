@@ -18,10 +18,11 @@ class Lissajous {
         bool selected;
         float acceleration;
         
-        void setRadius(float radiusX, float radiusY);
+        void setRadius(float radius);
+        void setHeight(float height);
         void setColor(float r, float g, float b, float a);
 
-        void setPosition(float x, float y, float z);
+        void setPosition(float ix, float iy, float iz);
         void setEndPosition(float x, float y, float z);
     
         bool getAlive();
@@ -39,25 +40,26 @@ class Lissajous {
         int id;
         int nPoints;
         
-        float centerX, centerX_end;
-        float centerY, centerY_end;
-        float centerZ, centerZ_end;
-        float radiusX, radiusY, radiusZ;
-        
-        float red, green, blue, alpha;
+        float x, endX;
+        float y, endY;
+        float z, endZ;
+        float radius;
+        float height;
+    
+        float R, G, B, A;
         
         float coils;
         float stretch;
         
         float counter, phaserA, phaserB, expansionFactor;
         
-        float threshhold,  xacceleration;
+        float threshhold, xacceleration;
         bool alive;
         bool expanding;
     
         bool isInPosition();
         void setAlpha(float a);
-        void setId(int id);
+        void setId(int i);
             
 };
 

@@ -10,32 +10,40 @@
 #include "ofMain.h"
 #include <stdio.h>
 
+enum ringAnimationType {
+    line = 0,
+    orbital,
+    tangental
+};
+
 class Ring {
 	
 	private:
 		float x, y, z;
 		// float centerX, centerY, centerZ;
-		float startX, startY, startZ;
 		float endX, endY, endZ;
-		float R, G, B, A;
 		
-		float orbitRadius;
-		float currentRadius; 
+		float currentRadius;
 		float finalRadius;
 	
-		int ident;
-		int positionType;
+        float orbitRadius;
+    
+        float R, G, B, A;
+    
 		float step;
 		float counter;
 		float acceleration;
 		
-		int switcher;
 		bool subBeat;
 		bool alive;
 		bool ready;
 	
-		
 	public:
+    
+        int ident;
+        bool bounce;
+        ringAnimationType animationType;
+    
 		Ring();
 		
         void setColor(float r, float g, float b, float a);
@@ -47,12 +55,14 @@ class Ring {
         void setZ(float iz);
 		void position();
 	
-		void bounce();
+		// void bounce();
 		void move();
-		void draw(int ipositionNum, float iacceleration);
+		void draw(float iacceleration);
 	
 		bool isReady();
 		bool status();
+    
+        void resetRadius();
 		//~Ring();
 	
 };

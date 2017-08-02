@@ -9,25 +9,24 @@
 #include "Lissajous.hpp"
 
 Lissajous::Lissajous() {
-    printf("lissajous constructor called\n");
-
+    
     alive = false;
     expanding = false;
 
-    radiusX = 100.;
-    radiusY = 100.;
-    radiusZ = 100.;
+    radius = 100.,
+    height = 100.;
     
-    centerX = 0.0,
-    centerY = 0.0,
-    centerZ = 0.0;
-    centerX_end = 0.0,
-    centerY_end = 0.0,
-    centerZ_end = 0.0;
+    x = 0.0,
+    y = 0.0,
+    z = 0.0;
+
+    endX = 0.0,
+    endY = 0.0,
+    endZ = 0.0;
     
     phaserA = 0.0,
     phaserB = 0.0,
-    counter = 0.0,
+    counter = 0.0;
    
     setColor(256, 256, 256, 1.);
     
@@ -42,37 +41,41 @@ void Lissajous::setPoints(int p) {
     nPoints = p;
 }
 
-void Lissajous::setRadius(float rx, float ry) {
-    radiusX = rx;
-    radiusY = ry;
+void Lissajous::setRadius(float r) {
+    radius = r;
 }
 
+void Lissajous::setHeight(float h) {
+    height = h;
+}
+
+
 void Lissajous::setColor(float r, float g, float b, float a) {
-    red = r;
-    green = g;
-    blue = b;
-    alpha = a;
+    R = r;
+    G = g;
+    B = b;
+    A = a;
 }
 
 void Lissajous::setAlpha(float a) {
-    alpha = a;
+    A = a;
 }
 
-void Lissajous::setPosition(float x, float y, float z) {
-    centerX = x;
-    centerY = y;
-    centerZ = z;
+void Lissajous::setPosition(float ix, float iy, float iz) {
+    x = ix;
+    y = iy;
+    z = iz;
 }
 
-void Lissajous::setEndPosition(float x, float y, float z) {
-    centerX_end = x;
-    centerY_end = y;
-    centerZ_end = z;
+void Lissajous::setEndPosition(float ix, float iy, float iz) {
+    endX = ix;
+    endY = iy;
+    endZ = iz;
 }
 
 
 bool Lissajous::isInPosition() {
-    return (centerX == centerX_end && centerY == centerY_end && centerZ == centerZ_end);
+    return (x == endX && y == endY && z == endZ);
 }
 
 void Lissajous::setAlive(bool istatus) {
@@ -80,29 +83,31 @@ void Lissajous::setAlive(bool istatus) {
     printf("am I alive %d\n\n", alive);
 }
 
-void Lissajous::setId(int id) {
-    id = id;
+void Lissajous::setId(int i) {
+    id = i;
 }
 
 void Lissajous::move() {
-    if (isInPosition()) return;
+    if (isInPosition()) {
+        return;
+    }
     
     // acceleration += .05;
     acceleration = 1.;
-    centerX += acceleration * (.001 * (centerX_end - centerX));
-    centerY += acceleration * (.001 * (centerY_end - centerY));
-    centerZ += acceleration * (.001 * (centerZ_end - centerZ));
+    x += acceleration * (.001 * (endX - x));
+    y += acceleration * (.001 * (endY - y));
+    z += acceleration * (.001 * (endZ - z));
 }
 
 void Lissajous::draw() {
     
-    ofSetColor(red, green, blue, alpha);
+    ofSetColor(R, G, B, A);
     
-    move();
+    // move();
     
     // this is some fade??
-    if (alive && alpha < 1. && !expanding) {
-        alpha += .001;
+    if (alive && A < 1. && !expanding) {
+        A += .001;
     }
     
     // not sure what phasers do
@@ -111,49 +116,43 @@ void Lissajous::draw() {
     
     counter += .1;
     
-    float lissLength = radiusY * 6.; // how vertically stretched it is / phase point
     // float lissLength = ofGetHeight();
     
-    // draw dots
-    for (int point = 1; point < nPoints; point++)
-    {
-        float position = ((360) * (float)point/nPoints) * DEG_TO_RAD;
+    for (int point = 1; point < nPoints; point++) {
         
+        float pointRatio = (float)point/nPoints;
+        float radPosition = 360 * pointRatio * DEG_TO_RAD;
         
-        // turning in one place, static pattern
-//        float x = centerX + (cos(position + counter) * radiusX);
-//        float y = centerY + sin(position + counter)  - (lissLength/2.) + fmod(y + (lissLength/2.), lissLength);
-//        float z = centerZ;
-       
-        float x = centerX + (cos(position + counter) * radiusX);
-        float y = centerY + sin(position + counter)  - (lissLength/2.) + fmod(y + (lissLength/2.), lissLength);
-        float z = centerZ + (sin(position + counter) * radiusX);
+        float lissX = cos(radPosition) * radius;
         
+        // playing around with this, fmod seems to be crucial for a good effect,
+        // other params seem a little arbitrary but it works
+        // not much understanding behind the math, but this is a cool effect
+        
+        float lissY = sin(radPosition) * radius + (height * pointRatio * counter);
+        lissY = fmod(lissY, height);
+        
+        float lissZ = (sin(radPosition) * radius);
+
         /*
-        // changing patterns when position of liss moves
-        float x = centerX + (cos(position) * radiusX);
-        float y = centerY - (lissLength/2.) + fmod(y + (lissLength/2.0), lissLength);
-        float z = centerZ;
-        */
-        
-        /*
-        // changing patterns with counter
-        float x = (centerX + counter) + (cos(position) * radiusX);
-        float y = (centerY + counter) - (lissLength/2.) + fmod(y + (lissLength/2.0), lissLength);
-        float z = centerZ;
+         weird effect when you change the radius
+         
+         pointX = x + cos(radPosition) * radius;
+         //pointY = (sin(radPosition) * radius + pointRatio * counter * height);
+         pointY = (y - height/2.) + fmod(sin(radPosition * height) * radius + counter, height);
+         pointZ = z;
+         
         */
 
-        printf("draw %f %f %f \n", x, y, z);
-        
-        ofDrawCircle(x, y, z, 3);
+        ofDrawCircle(x + lissX, (y - height/2.) + lissY, z + lissZ, 2);
     }
 }
 
 
 void Lissajous::expand() {
-    radiusX += expansionFactor * xacceleration;
+    radius += expansionFactor * xacceleration;
     xacceleration += .07;
-    setAlpha(alpha -= .001);
+    setAlpha(A -= .001);
 }
 
 /*
