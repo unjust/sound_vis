@@ -59,6 +59,12 @@ void Lissajous::setColor(float r, float g, float b, float a) {
 
 void Lissajous::setAlpha(float a) {
     A = a;
+    
+    printf("SET ALPHA MY ALPHA IS %d \n", A);
+}
+
+int Lissajous::getAlpha() {
+    return A;
 }
 
 void Lissajous::setPosition(float ix, float iy, float iz) {
@@ -101,14 +107,19 @@ void Lissajous::move() {
 
 void Lissajous::draw() {
     
+    // printf("about to ofSetColor in draw, alpha is %d \n", A);
+    
     ofSetColor(R, G, B, A);
+    // ofSetColor(100, 1, 25, 80);
     
     // move();
     
     // this is some fade??
+    /*
     if (alive && A < 1. && !expanding) {
         A += .001;
     }
+    */
     
     // not sure what phasers do
     // phaserA += .008;
@@ -155,17 +166,20 @@ void Lissajous::expand() {
     setAlpha(A -= .001);
 }
 
-/*
+
 void Lissajous::coil(float ixRadius, float icoils) {
     if (expanding) {
         expand();
         if (A < 0.1) alive = false;
         return;
     }
-    if (selected && radiusX > threshhold) {
+    
+    /*
+    if (selected && radius > threshhold) {
         expanding = true;
         return;
     }
+    */
 
     float startCoils = coils;
     float endCoils   = icoils;
@@ -173,17 +187,16 @@ void Lissajous::coil(float ixRadius, float icoils) {
     coils += (.001 * (endCoils - startCoils));
     printf("diff = %f, coils = %f\n", startCoils - endCoils, coils);
 
-    float startXRadius = radiusX;
+    float startXRadius = radius;
     float endXRadius = ixRadius;
 
-    radiusX += (.001 * (endXRadius - startXRadius));
+    radius += (.001 * (endXRadius - startXRadius));
 
     //float startYRadius = yRadius;
     //float endYRadius   = iyRadius;
 
     //yRadius += (.001 * (endYRadius - startYRadius));
 }
-*/
 
 
 bool Lissajous::getAlive() {
