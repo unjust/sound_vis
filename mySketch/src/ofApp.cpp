@@ -1,5 +1,69 @@
 #include "ofApp.h"
 
+
+//global transforms + camera
+float translateX = 0, translateY = 0, translateZ = -2.;
+float translateAX = 0, translateAY = 0, translateAZ = -2.;
+float scaleX = 1, scaleY = 1, scaleZ = 1.;
+float rotateAngle = 0, rotateX = 0, rotateY = 0, rotateZ = 0.;
+
+float xRight = .9;
+float xLeft = xRight * -1.;
+float yTop = .9;
+float yBottom = yTop * -1.;
+float xFactor = 0.;
+
+bool allLissOn = false;
+
+int silence = 0;
+
+//for ring cam
+
+//double camTransitionTime = .3;
+//double nextSpotWillHappenAt = 0;
+//double startX = 0, startY = 0, startZ = 0;
+//double endX = 0, endY = 0, endZ = 0;
+
+////////from ringsApp
+/*
+double camTransitionTime = 10.;
+double nextSpotWillHappenAt = 20.;
+
+double rotateAngleX = 0, rotateAngleY = 0, rotateAngleZ = 0;
+double startRotateX = 0, startRotateY = 0, startRotateZ = 0;
+double endRotateX = 0, endRotateY = 0, endRotateZ = 0;
+double startTranslateX = 0, startTranslateY = 0, startTranslateZ = 0;
+double endTranslateX = 0, endTranslateY = 0, endTranslateZ = 0;
+
+bool move = false;
+bool first = true;
+
+
+//what to show
+bool analysisView = false;
+bool rings = false;
+bool lines = true;
+bool plane = false;
+bool fullScreen = true;
+bool loopRestart = false;
+
+
+bool allLissOn = false;
+int ringSwitch = 0;
+int lineSwitch = 2;
+float coils = 1.;
+float lradius = .4;
+
+
+int lastWindow = 0;
+int windowsPassed = 0;
+int ticker = 0;
+int dir = 0;
+float beatCount = 0.;
+float lastSimTime = 0.;
+const float simTickLength = .0001;
+*/
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -18,6 +82,8 @@ void ofApp::setup(){
     camera.setNearClip(nearClip);
     camera.setFarClip(farClip);
     
+    LISS_SELECTOR = 0;
+    
 }
 
 //--------------------------------------------------------------
@@ -35,8 +101,8 @@ void ofApp::update(){
     ofSoundUpdate();
   
     // grab the fft and put in smoothed array like example project
-    float *val = ofSoundGetSpectrum(nBandsToGet); // request 128 for FFT
     
+    float *val = ofSoundGetSpectrum(nBandsToGet); // request 128 for FFT
     for (int i = 0; i < nBandsToGet; i++) {
         
         // let the smoothed value sink to zero:
@@ -50,16 +116,14 @@ void ofApp::update(){
         //printf("%f \n", fftSmoothed[i]);
     }
     
-    // update liss
-
-    for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++) {
-        lisses[l].setRadius(lissRadius + (fftSmoothed[10] * 300));
-        lisses[l].setHeight(lissHeight);
-        lisses[l].setPoints(points);
-    }
+    updateLissajous(fftSmoothed);
+    
+    
     
     // update rings
-    int WINDOW_SIZE = nBandsToGet; // temporary
+    int WINDOW_SIZE = nBandsToGet; // temporary, TODO write an extensice comment here on window size
+    
+    // and the smoothed code blow
     
     for (int j = 0; j < NUMBER_OF_RINGS; j++){
         //if (RINGS[j]->status()) continue;
@@ -138,6 +202,117 @@ void ofApp::draw(){
         line.draw();
         fftDraw();
     }
+}
+
+void ofApp::updateLissajous(float *soundData) {
+  
+    // update liss
+    
+    for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++) {
+        lisses[l].setRadius(lissRadius + (fftSmoothed[10] * 300));
+        lisses[l].setHeight(lissHeight);
+        lisses[l].setPoints(points);
+    }
+    
+    // reduce opacity fn
+    
+    int a = (lisses[LISS_SELECTOR]).getAlpha();
+    
+    // why didnt this work???
+    // Lissajous selected = lisses[LISS_SELECTOR];
+    
+    if (fadingIn) {
+        for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++) {
+            int a = lisses[l].getAlpha();
+            lisses[l].setAlpha(a+1);
+            if (l == NUMBER_OF_LISS - 1 && a == 256) {
+                fadingIn = false;
+            }
+        }
+    } else {
+        if (a < 0) {
+            LISS_SELECTOR++;
+        } else {
+            int newAlpha = a - 1;
+            (lisses[LISS_SELECTOR]).setAlpha(newAlpha);
+        }
+    }
+
+    
+    //for Lissajous motion
+    
+    float totalMagnitude = 0.;
+    int WINDOW_SIZE = nBandsToGet; // temporary, TODO write an extensice comment here on window size
+    
+    for (int i = 0; i < WINDOW_SIZE/2; i++) {
+        totalMagnitude += soundData[i];
+        // totalMagnitude += theWindows[currentWindow].magnitudeL[i];
+    }
+    if (totalMagnitude < .05) {
+        silence++;
+    }
+    
+    //totalMagnitude /= (WINDOW_SIZE/2);
+    int ok = (int)((WINDOW_SIZE/2.)/NUMBER_OF_LISS);
+    bool selectedLiss = false;
+    int theLeader = 0;
+    
+    //go through Liss and select a Leader | a new Liss must be selected if the previous dies
+    for (int k = 0; k < NUMBER_OF_LISS; k++) {
+        float subMagnitude = 0.;
+        
+        if (!lisses[k].getAlive()) {
+          continue; //if its dead carry on
+        }
+        
+        int coils = k + 3;
+        
+        for (int y = k * ok; y < (k + 1) * ok; y++) {
+            //printf("y = %d\n", y);
+            // subMagnitude += theWindows[currentWindow].magnitudeL[k];
+            subMagnitude += soundData[k];
+        }
+        
+        //subMagnitude /= ok;
+        if (!selectedLiss) {
+            lisses[k].selected = true;
+            lisses[k].setPosition(0., 0., .4);
+            //lissajousPosition(float ixCenter, float iyCenter, float izCenter);
+            selectedLiss = true;
+        }
+
+        float xCenterPos = lisses[k].x;
+        if (lisses[k].selected == true && (xCenterPos < 0.01 && xCenterPos > -0.01)) {
+            lisses[k].coil((totalMagnitude * .3) + .1, (totalMagnitude + coils) * 1.5);
+            theLeader = k;
+        }
+        else {
+            lisses[k].coil(.1, subMagnitude/2 + coils);
+            
+        }
+        if (!lisses[k].selected && theLeader != 0 && k > 2 && (theLeader - k) % 2 == 0) {
+            float newXPosition = 0., newYPosition = 0., newZPosition = 0.;
+            newZPosition = lisses[k - 1].z;
+            newYPosition = lisses[k - 1].y;
+            if (k % 2 == 0) {
+                newXPosition = (lisses[k - 2].x) -.45 - ( 1.25 * (xRight - xLeft)/NUMBER_OF_LISS);
+            }
+            else  newXPosition = (lisses[k - 2].x) + .45 + ( 1.25  * (xRight - xLeft)/NUMBER_OF_LISS);
+            lisses[k].setPosition(newXPosition, newYPosition, newZPosition);
+        }
+        //LISS[k]->lissajousCoiling((totalMagnitude * .2) + .1, subMagnitude/2 + coils);
+        //lissajousCoiling(float ixRadius, float icoils)
+    }
+    
+    //when the first Lissajous is ready and together, turn the rest on
+    if (lisses[0].getAlive() && lisses[0].x < .5 && allLissOn == false) {
+        
+        for (int i = 1; i < NUMBER_OF_LISS; i++)  {
+           lisses[i].setAlive(true);
+        }
+        allLissOn = true;
+    }
+
 }
 
 //----------------------------------------------------------------
@@ -404,6 +579,7 @@ void ofApp::initAnimObjects(){
     
     int liss_count = sizeof(lisses)/sizeof(lisses[0]);
     float sectionWidth = ofGetWidth()/liss_count;
+    fadingIn = true;
     
     for (int l = 0; l < liss_count; l++) {
         
@@ -411,6 +587,7 @@ void ofApp::initAnimObjects(){
         lisses[l].setRadius(20);
         lisses[l].setHeight(2);
         lisses[l].setColor(256, 256, 0, 256);
+        lisses[l].setAlpha(0);
         lisses[l].setAlive(true);
 
         float xPos = (-1 * ofGetWidth()/2) + (sectionWidth * l) + (sectionWidth/2 - 20/2);

@@ -21,6 +21,9 @@ class Lissajous {
         void setRadius(float radius);
         void setHeight(float height);
         void setColor(float r, float g, float b, float a);
+    
+        int  getAlpha();
+        void setAlpha(float a);
 
         void setPosition(float ix, float iy, float iz);
         void setEndPosition(float x, float y, float z);
@@ -35,18 +38,19 @@ class Lissajous {
     
         Lissajous();
         void setPoints(int p);
-        
-    private:
-        int id;
-        int nPoints;
-        
+    
+        // todo proper get and seet
         float x, endX;
         float y, endY;
         float z, endZ;
+    private:
+        int id;
+        int nPoints;
+    
         float radius;
         float height;
     
-        float R, G, B, A;
+        int R, G, B, A;
         
         float coils;
         float stretch;
@@ -58,7 +62,6 @@ class Lissajous {
         bool expanding;
     
         bool isInPosition();
-        void setAlpha(float a);
         void setId(int i);
             
 };

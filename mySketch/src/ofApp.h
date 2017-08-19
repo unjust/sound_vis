@@ -5,6 +5,8 @@
 #include "Lissajous.hpp"
 #include "Ring.h"
 
+#define NUMBER_OF_LISS 7
+
 class ofApp : public ofBaseApp{
     
     public:
@@ -66,7 +68,7 @@ class ofApp : public ofBaseApp{
         ofParameter <float>ringRadius;
         ofParameter <float>ringZ;
     
-        int ringAnimation;
+        int ringAnimation; // ringAnimationType ?
         ofxButton ringAnimationButton;
     
         ofxPanel cameraPanel;
@@ -86,7 +88,9 @@ class ofApp : public ofBaseApp{
         ofPolyline line;
     
         // Lissajous liss;
-        Lissajous lisses[7];
+        Lissajous lisses[NUMBER_OF_LISS];
+        int LISS_SELECTOR;
+        bool fadingIn;
     
         Ring ring;
         Ring rings[128];
@@ -108,5 +112,6 @@ class ofApp : public ofBaseApp{
         void fftDraw();
         void setupGui();
         void initAnimObjects();
+        void updateLissajous(float *soundData);
 
 };
