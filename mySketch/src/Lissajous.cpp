@@ -50,17 +50,17 @@ void Lissajous::setHeight(float h) {
 }
 
 
-void Lissajous::setColor(float r, float g, float b, float a) {
+void Lissajous::setColor(int r, int g, int b, int a) {
     R = r;
     G = g;
     B = b;
-    A = a;
+    setAlpha(a);
 }
 
 void Lissajous::setAlpha(float a) {
     A = a;
     
-    printf("SET ALPHA MY ALPHA IS %d \n", A);
+    // printf("SET ALPHA MY ALPHA IS %d \n", A);
 }
 
 int Lissajous::getAlpha() {
@@ -86,7 +86,7 @@ bool Lissajous::isInPosition() {
 
 void Lissajous::setAlive(bool istatus) {
     alive = istatus;
-    printf("am I alive %d\n\n", alive);
+    // printf("am I alive %d\n\n", alive);
 }
 
 void Lissajous::setId(int i) {
@@ -107,10 +107,8 @@ void Lissajous::move() {
 
 void Lissajous::draw() {
     
-    // printf("about to ofSetColor in draw, alpha is %d \n", A);
-    
+    // printf("about to ofSetColor in draw, %d %d %d %d \n", R, G, B, A);
     ofSetColor(R, G, B, A);
-    // ofSetColor(100, 1, 25, 80);
     
     // move();
     
@@ -185,7 +183,7 @@ void Lissajous::coil(float ixRadius, float icoils) {
     float endCoils   = icoils;
 
     coils += (.001 * (endCoils - startCoils));
-    printf("diff = %f, coils = %f\n", startCoils - endCoils, coils);
+    // printf("diff = %f, coils = %f\n", startCoils - endCoils, coils);
 
     float startXRadius = radius;
     float endXRadius = ixRadius;

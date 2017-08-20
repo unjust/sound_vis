@@ -6,7 +6,7 @@ Ring * RINGS[NUMBER_OF_RINGS];
 
 
 Ring::Ring(){
-	printf("default ring constructor called\n");
+	// printf("default ring constructor called\n");
 
 	alive = false;
     currentRadius = 0.;

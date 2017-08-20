@@ -72,15 +72,15 @@ void ofApp::setup(){
     setupGui();
     initSound();
     
-    sceneCenter = ofVec3f(ofGetWidth()/2, ofGetHeight()/2, 0);
-
-
     initAnimObjects();
 
+    sceneCenter = ofVec3f(ofGetWidth()/2, ofGetHeight()/2, 0);
     camera.setupPerspective();
     camera.setFov(60);
     camera.setNearClip(nearClip);
     camera.setFarClip(farClip);
+    
+    easyCam.setDistance(900);
     
     LISS_SELECTOR = 0;
     
@@ -119,7 +119,6 @@ void ofApp::update(){
     updateLissajous(fftSmoothed);
     
     
-    
     // update rings
     int WINDOW_SIZE = nBandsToGet; // temporary, TODO write an extensice comment here on window size
     
@@ -155,10 +154,12 @@ void ofApp::update(){
    
     // camera.pan(cameraRotate);
    
-    
+    /*
     if (lookAtCenter) {
+        easyCam.lookAt(sceneCenter);
         camera.lookAt(sceneCenter);
     }
+    */
     
 }
 
@@ -166,20 +167,20 @@ void ofApp::update(){
 void ofApp::draw(){
   
     // gui
-    cameraPanel.draw();
+    // cameraPanel.draw();
     lissajousAttrsPanel.draw();
     ringAttrsPanel.draw();
     soundPanel.draw();
   
+    easyCam.begin();
     
-    camera.begin();
+    ofTranslate(-ofGetWidth()/2, 0, 0);
     
-    //
-    ofPushMatrix();
-    ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 0); // now center is 0, 0, 0
+    ofSetColor(255,0,0);
+    ofFill();
     
-    //cout << "\n camera position: " << camera.getPosition();
-
+    ofDrawBox(30);
+    
     if (showLissajous) {
         for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++){
             lisses[l].draw();
@@ -187,15 +188,14 @@ void ofApp::draw(){
     }
     
     if (showRings) {
-        
         for (int j = 0; j < NUMBER_OF_RINGS; j++){
             // rings[j].draw(1, 10.);
             rings[j].draw(.01);
         }
     }
     
-    ofPopMatrix();
-    camera.end();
+    ofDisableAlphaBlending();
+    easyCam.end();
     
     // draw fft
     if (showDebug) {
@@ -206,7 +206,7 @@ void ofApp::draw(){
 
 void ofApp::updateLissajous(float *soundData) {
   
-    // update liss
+    // set size of them
     
     for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++) {
         lisses[l].setRadius(lissRadius + (fftSmoothed[10] * 300));
@@ -216,27 +216,34 @@ void ofApp::updateLissajous(float *soundData) {
     
     // reduce opacity fn
     
-    int a = (lisses[LISS_SELECTOR]).getAlpha();
-    
-    // why didnt this work???
+    // int a = (lisses[LISS_SELECTOR]).getAlpha();
+        // why didnt this work???
     // Lissajous selected = lisses[LISS_SELECTOR];
     
-    if (fadingIn) {
-        for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++) {
-            int a = lisses[l].getAlpha();
-            lisses[l].setAlpha(a+1);
-            if (l == NUMBER_OF_LISS - 1 && a == 256) {
-                fadingIn = false;
-            }
-        }
-    } else {
-        if (a < 0) {
-            LISS_SELECTOR++;
-        } else {
-            int newAlpha = a - 1;
-            (lisses[LISS_SELECTOR]).setAlpha(newAlpha);
-        }
-    }
+//    if (fadingIn) {
+//        for (int l = 0; l < sizeof(lisses)/sizeof(lisses[0]); l++) {
+//            int a = lisses[l].getAlpha();
+//            printf("Number %d alpha is %d \n", l, a);
+//
+//            lisses[l].setAlpha(a+1);
+//            
+//            printf("Number %d alpha is NOW %d \n", l, lisses[l].getAlpha());
+//
+//            
+//            // all are faded up completely
+//            if (l == NUMBER_OF_LISS - 1 && a == 256) {
+//                fadingIn = false;
+//            }
+//        }
+//    }
+//    } else {
+//        if (a < 0) {
+//            LISS_SELECTOR++;
+//        } else {
+//            int newAlpha = a - 1;
+//            (lisses[LISS_SELECTOR]).setAlpha(newAlpha);
+//        }
+//    }
 
     
     //for Lissajous motion
@@ -412,9 +419,7 @@ void ofApp::setupGui(){
     ringAttrsPanel.setup(ringAttrsParams, "ring.xml", x, y += 100);
     ringAttrsPanel.add(ringAnimationButton.setup("anim type"));
    
-   
     ringAnimationButton.addListener(this, &ofApp::ringAnimButtonPressed);
-    
     
     cameraParams.setName("Camera");
 
@@ -426,6 +431,7 @@ void ofApp::setupGui(){
     cameraParams.add(zoom.set("zoom", 665., 0, 1000.0));
     cameraParams.add(cameraRotate.set("rotate", 0, 0, 360));
     cameraParams.add(lookAtCenter.set("point", true));
+    cameraParams.add(resetCamera.set("reset cam", true));
     cameraParams.add(showDebug.set("debug", false));
     
     cameraX.addListener(this, &ofApp::handleCameraControls);
@@ -434,6 +440,7 @@ void ofApp::setupGui(){
     zoom.addListener(this, &ofApp::handleCameraControls);
     nearClip.addListener(this, &ofApp::handleCameraControls);
     farClip.addListener(this, &ofApp::handleCameraControls);
+    resetCamera.addListener(this, &ofApp::handleCameraReset);
 
     //lookAtCenter.addListener(this, &ofApp::handleCameraControls);
     
@@ -454,6 +461,13 @@ void ofApp::setupGui(){
 }
 
 void ofApp::setRingRadius(const void* sender, float &value) {}
+
+void ofApp::handleCameraReset(const void* sender, bool &value) {
+
+    if (value) {
+        camera.lookAt(sceneCenter);
+    }
+}
 
 void ofApp::handleCameraControls(const void* sender, float &value) {
     cout << "\n value " << value;
@@ -481,9 +495,13 @@ void ofApp::handleCameraControls(const void* sender, float &value) {
     
     if (s == cameraY) {
         camera.setPosition(myCamGlobalPosition.x, cameraY, myCamGlobalPosition.z);
-        // camera.lookAt(sceneCenter);
+        
     }
     
+    if (s == resetCamera) {
+        camera.lookAt(sceneCenter);
+    }
+        
     if (s == nearClip) {
         camera.setNearClip(nearClip);
     }
@@ -577,29 +595,40 @@ void ofApp::fftDraw(){
 //--------------------------------------------------------------
 void ofApp::initAnimObjects(){
     
-    int liss_count = sizeof(lisses)/sizeof(lisses[0]);
-    float sectionWidth = ofGetWidth()/liss_count;
+    // int liss_count = sizeof(lisses)/sizeof(lisses[0]);
+    
+    float sectionWidth = ofGetWidth()/2 / floor(NUMBER_OF_LISS/2);
+    
     fadingIn = true;
     
-    for (int l = 0; l < liss_count; l++) {
+    for (int l = 0; l < NUMBER_OF_LISS; l++) {
         
         // init lissajous
         lisses[l].setRadius(20);
         lisses[l].setHeight(2);
-        lisses[l].setColor(256, 256, 0, 256);
-        lisses[l].setAlpha(0);
+        
+        if (l == 0) {
+            lisses[l].setColor(256, 256, 256, 0);
+        } else if (l == 3) {
+             lisses[l].setColor(0, 256, 256, 0);
+        } else if (l == NUMBER_OF_LISS -1) {
+            lisses[l].setColor(0, 256, 0, 0);
+        } else {
+            lisses[l].setColor(256, 256, 0, 0);
+        }
+        
+
+        lisses[l].setAlpha(256);
         lisses[l].setAlive(true);
 
-        float xPos = (-1 * ofGetWidth()/2) + (sectionWidth * l) + (sectionWidth/2 - 20/2);
-        float zPos = 0; // abs((l++ % liss_count) - liss_count/2);
-        lisses[l].setPosition(xPos, 0, zPos);
-        lisses[l].setEndPosition(0., 0., 0);
+        
+        
+        float xPos = (sectionWidth * l);
+        float zPos = -100 * (abs(l - floor(NUMBER_OF_LISS/2)));
+        
+        lisses[l].setPosition(xPos, 0, 0);
+        //lisses[l].setEndPosition(0., 0., 0);
     }
-  
-//    liss.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
-//    liss.setEndPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
-    
-   
     
     // init rings
     for (int r = 0; r < sizeof(rings)/sizeof(rings[0]); r++) {

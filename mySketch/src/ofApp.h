@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "Lissajous.hpp"
@@ -33,6 +34,7 @@ class ofApp : public ofBaseApp{
         void setRingRadius(const void* sender, float &value);
     
         void handleCameraControls(const void* sender, float &value);
+        void handleCameraReset(const void* sender, bool &value);
     
         void audioOut( float * output, int bufferSize, int nChannels );
         void playSound(bool snd);
@@ -40,6 +42,8 @@ class ofApp : public ofBaseApp{
     private:
     
         ofCamera camera;
+        ofEasyCam easyCam;
+    
         ofVec3f sceneCenter;
     
         // gui
@@ -81,6 +85,7 @@ class ofApp : public ofBaseApp{
         ofParameter <float>farClip;
         ofParameter <float>cameraRotate;
         ofParameter <bool>showDebug;
+        ofParameter <bool>resetCamera;
         ofParameter <bool>lookAtCenter;
     
         // drawing

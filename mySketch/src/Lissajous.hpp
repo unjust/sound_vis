@@ -20,7 +20,7 @@ class Lissajous {
         
         void setRadius(float radius);
         void setHeight(float height);
-        void setColor(float r, float g, float b, float a);
+        void setColor(int r, int g, int b, int a);
     
         int  getAlpha();
         void setAlpha(float a);
