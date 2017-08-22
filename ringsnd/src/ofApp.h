@@ -1,11 +1,10 @@
 #pragma once
 
-
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "Ring.h"
 
-#define NUMBER_OF_LISS 7
+#define NUMBER_OF_BANDS 128
 
 class ofApp : public ofBaseApp{
     
@@ -27,16 +26,16 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    void sndTogglePressed(const void* sender, bool &value);
     void ringAnimButtonPressed(const void* sender);
-    void handleVolume(const void* sender, float &value);
     void setRingRadius(const void* sender, float &value);
     
     void handleCameraControls(const void* sender, float &value);
     void handleCameraReset(const void* sender, bool &value);
     
-    void audioOut( float * output, int bufferSize, int nChannels );
-    void playSound(bool snd);
+    void handleVolume(const void* sender, float &value);
+    
+    void audioOut( ofSoundBuffer &outBuffer );
+    
     
 private:
     
@@ -51,8 +50,7 @@ private:
     ofParameterGroup soundParams;
     
     ofParameter <float>volume;
-    ofParameter <bool>playSnd;
-    ofParameter <bool>playFennesz;
+    ofParameter <bool>showFFT;
     
     ofxPanel ringAttrsPanel;
     ofParameterGroup ringAttrsParams;
@@ -61,9 +59,10 @@ private:
     ofParameter <bool>showRings;
     
     ofParameter <float>ringRadius;
+    ofParameter <float>ringOrbitRadius;
     ofParameter <float>ringZ;
     
-    int ringAnimation; // ringAnimationType ?
+    ringAnimationType ringAnimation; // ringAnimationType ?
     ofxButton ringAnimationButton;
     
     ofxPanel cameraPanel;
@@ -73,7 +72,7 @@ private:
     // drawing
     
     Ring ring;
-    Ring rings[128];
+    Ring rings[NUMBER_OF_RINGS];
     
     float posX;
     float posY;
@@ -89,7 +88,9 @@ private:
     // methods
     
     void initSound();
+    void playSound();
     void fftDraw();
+    float* getFFTData(int numBands);
     void setupGui();
     void initAnimObjects();
     

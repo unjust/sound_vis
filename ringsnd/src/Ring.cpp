@@ -4,14 +4,14 @@
 
 Ring * RINGS[NUMBER_OF_RINGS];
 
+float Ring::baseRadius = 0;
+float Ring::orbitRadius = 100.;
 
 Ring::Ring(){
-	// printf("default ring constructor called\n");
 
 	alive = false;
     currentRadius = 0.;
     finalRadius = 100.;
-	orbitRadius = 100.;
     
     x = 0;
     y = 0;
@@ -27,6 +27,13 @@ Ring::Ring(){
     acceleration = 1.;
 }
 
+void Ring::setOrbitRadius(float r){
+    Ring::orbitRadius = r;
+}
+
+void Ring::setBaseRadius(float r){
+    Ring::baseRadius = r;
+}
 
 void Ring::setRadius(float r){
     currentRadius = r;
@@ -35,7 +42,6 @@ void Ring::setRadius(float r){
 void Ring::setFinalRadius(float r){
     finalRadius = r;
     alive = true; //turned on
-    printf("FINAL RADIUS %f \n", r);
 }
 
 void Ring::setPosition(float ix, float iy, float iz){
@@ -94,8 +100,8 @@ void Ring::position(){
     } else if (animationType == orbital) {
         
         float input = TWO_PI * ident/NUMBER_OF_RINGS + counter;
-        endX = orbitRadius * sin(input);
-        endY = orbitRadius * cos(input);
+        endX = Ring::orbitRadius * sin(input);
+        endY = Ring::orbitRadius * cos(input);
         endZ = 0.;
         
     } else {
@@ -123,6 +129,8 @@ void Ring::draw(float iacceleration){
         position();
         move();
         
+        float r = currentRadius + Ring::baseRadius; // factor in a base
+        
         //if (switcher)
 //        if (bounce) {
 //            glColor4f(R, G, B, A);
@@ -147,7 +155,7 @@ void Ring::draw(float iacceleration){
 //            glVertex3f(aX, aY, aZ);
             float angle = 2 * PI * i/circle_points;
             //glVertex3f(-1.6 + x + cos(angle) * radius, sin(angle) *  radius, 0.0);
-            glVertex3f(x + cos(angle) * currentRadius, y + sin(angle) * currentRadius, 0);
+            glVertex3f(x + cos(angle) * r, y + sin(angle) * r, 0);
 
             
         }

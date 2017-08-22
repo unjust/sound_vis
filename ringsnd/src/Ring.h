@@ -24,9 +24,10 @@ class Ring {
 		float endX, endY, endZ;
 		
 		float currentRadius;
-		float finalRadius;
-	
-        float orbitRadius;
+        float finalRadius; // TODO deltaRadius instead
+    
+        static float baseRadius;  // added to currentRadius
+        static float orbitRadius;
     
         float R, G, B, A;
     
@@ -50,14 +51,17 @@ class Ring {
     
         void setRadius(float r);
         void setFinalRadius(float r);
+    
+        static void setBaseRadius(float r);
+        static void setOrbitRadius(float r);
 
 		void setPosition(float ix, float iy, float iz);
         void setZ(float iz);
-		void position();
         void setAnimationType(ringAnimationType type);
 	
 		// void bounce();
 		void move();
+        void position();
 		void draw(float iacceleration);
 	
 		bool isReady();
