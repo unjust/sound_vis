@@ -54,6 +54,7 @@ class Ring {
 		void setPosition(float ix, float iy, float iz);
         void setZ(float iz);
 		void position();
+        void setAnimationType(ringAnimationType type);
 	
 		// void bounce();
 		void move();

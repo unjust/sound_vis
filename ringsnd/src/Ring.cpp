@@ -35,6 +35,7 @@ void Ring::setRadius(float r){
 void Ring::setFinalRadius(float r){
     finalRadius = r;
     alive = true; //turned on
+    printf("FINAL RADIUS %f \n", r);
 }
 
 void Ring::setPosition(float ix, float iy, float iz){
@@ -85,7 +86,7 @@ void Ring::position(){
 	
 	if (animationType == line) {
         
-        endX = 0.;
+        endX = x;
 		endY = -300 + ident * 20; // copy initial position set by App for now
         // endY = -.1 + (.6/NUMBER_OF_RINGS) * ident;
 		//endZ = ident * .01;
@@ -101,6 +102,10 @@ void Ring::position(){
         endX = 0;
         endY = 0 - finalRadius;
     }
+}
+
+void Ring::setAnimationType(ringAnimationType type) {
+    animationType = type;
 }
 
 void Ring::resetRadius() {
@@ -231,38 +236,3 @@ bool Ring::status(){
 bool Ring::isReady(){
 	return ready;
 }
-
-//
-//Ring::~Ring() {
-//	printf("goodbye\n");
-//}
-
-/*
- Ring::Ring(int iident, float ix, float iy, float iz, float iR, float iG, float iB, float iA, float ifinalRadius) {
-	orbitRadius = .2;
-	currentRadius = 0.;
-	finalRadius =  .2;
-	
-	R = iR, G = iG, B = iB;
-	A = iA;
-	
-	ident = iident;
-	x = ix, y = iy, z = iz;
-	
-	startX = x, startY = y, startZ = z;
-	endX = x, endY = y, endZ = z;
-	//finalRadius =  rand() % 255;									//is this working?
-	
-	step = 1/10000.;
-	
-	alive = true;
-	ready = false, subBeat = false;
-	
-	counter = 0;
-	acceleration = 0.;
-	
-	switcher = 0;
-	//startX = orbitRadius * sin(ident * PI_2/NUMBER_OF_RINGS);
-	//startY = orbitRadius * cos(ident * PI_2/NUMBER_OF_RINGS);
- }
- */
