@@ -32,6 +32,7 @@ profile
 DerivedData/
 build/
 Builds/
+bin/
 
 #####
 # Xcode private settings (window sizes, bookmarks, breakpoints, custom executables, smart groups)
